@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BusolaG</title>
+  <style>
+    /* Body and header styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #F0F8FF; /* Alice Blue */
+      color: #696969; /* Dim Gray */
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #5F9EA0; /* Cadet Blue */
+      padding: 20px;
+      text-align: center;
+      color: #F0F8FF; /* Alice Blue */
+    }
+    /* Product container styles */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    /* Product item styles */
+    .product-item {
+      width: 300px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    /* Product image styles */
+    .product-img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    /* Product details styles */
+    .product-details {
+      text-align: center;
+    }
+    .product-title {
+      font-size: 1.2rem;
+      margin-top: 10px;
+    }
+    .product-price {
+      font-size: 1.2rem;
+      color: #5F9EA0; /* Cadet Blue */
+      margin-top: 5px;
+    }
+    .product-description {
+      margin-top: 10px;
+    }
+    /* Add to cart button styles */
+    .add-to-cart-btn {
+      background-color: #5F9EA0; /* Cadet Blue */
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .add-to-cart-btn:hover {
+      background-color: #4682B4; /* Steel Blue */
+    }
+    /* Cart section styles */
+    .cart {
+      background-color: #F0F8FF; /* Alice Blue */
+      padding: 20px;
+      margin-top: 20px;
+    }
+    /* Cart item styles */
+    #cart-items {
+      list-style-type: none;
+      padding: 0;
+    }
+    /* Cart total styles */
+    #cart-total {
+      font-size: 1.2rem;
+      margin-top: 10px;
+    }
+    /* Empty cart message styles */
+    #empty-cart-msg {
+      display: none;
+      color: #696969; /* Dim Gray */
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome to BusolaG.com</h1>
+    <p>Explore our latest collection of trendy fashion and accessories</p>
+  </header>
+  
+  <div class="container">
+    <h2>Featured Products</h2>
+    <div class="product">
+      <div class="product-item">
+        <img class="product-img" src="dress1.webp" alt="Dress 1">
+        <div class="product-details">
+          <h3 class="product-title">Elegant Floral Dress</h3>
+          <p class="product-price">$49.99</p>
+          <p class="product-description">Turn heads with this stunning floral dress, perfect for any occasion.</p>
+          <button class="add-to-cart-btn" onclick="addToCart('Elegant Floral Dress', 49.99)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product-item">
+        <img class="product-img" src="dress2.webp" alt="Dress 2">
+        <div class="product-details">
+          <h3 class="product-title">Chic Striped Midi Dress</h3>
+          <p class="product-price">$39.99</p>
+          <p class="product-description">Make a statement with this stylish striped midi dress, ideal for a day out in the city.</p>
+          <button class="add-to-cart-btn" onclick="addToCart('Chic Striped Midi Dress', 39.99)">Add to Cart</button>
+        </div>
+      </div>
+      <!-- Add more product items as needed -->
+    </div>
+  </div>
+  
+  <div class="cart">
+    <h2>Shopping Cart</h2>
+    <ul id="cart-items"></ul>
+    <div id="cart-total">Total: $0.00</div>
+    <p id="empty-cart-msg">Your cart is empty.</p>
+  </div>
+  
+  <script>
+    // JavaScript logic
+    let total = 0; // Initialize total variable
+    
+    // Function to add item to cart
+    function addToCart(itemName, itemPrice) {
+      const cartItems = document.getElementById('cart-items');
+      const li = document.createElement('li');
+      li.textContent = `${itemName} - $${itemPrice}`;
+      cartItems.appendChild(li);
+      
+      // Add item price to total
+      total += itemPrice;
+      
+      // Update cart total display
+      const cartTotal = document.getElementById('cart-total');
+      cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+      
+      // Hide empty cart message
+      document.getElementById('empty-cart-msg').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+

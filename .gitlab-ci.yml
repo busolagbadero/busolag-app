@@ -37,6 +37,7 @@ npm_test:
  stage: test
  script:
    - npm install
+   - npm install jest --save-dev
    - npm test
  cache:
     key:

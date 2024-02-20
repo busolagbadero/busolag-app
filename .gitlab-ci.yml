@@ -39,7 +39,7 @@ npm_test:
    - npm install
    - npm install jest --save-dev
    - npm test
-  allow_failure: true
+ allow_failure: true
  cache:
     key:
      files:

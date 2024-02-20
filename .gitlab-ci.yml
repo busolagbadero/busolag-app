@@ -37,8 +37,12 @@ npm_test:
  stage: test
  script:
    - npm install
+   - npm install express
    - npm install jest --save-dev
-   - npm test
+   - npm install supertest --save-dev
+   - npx jest
+   
+
  allow_failure: true
  cache:
     key:

@@ -139,7 +139,7 @@ trivy:
   before_script:
     # - apk --no-cache add curl python3 py3-pip
     # - pip3 install --no-cache-dir awscli --break-system-packages
-    - sudo chmod +w /usr/local/bin/
+    - chmod +w /usr/local/bin/
     - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.18.3
     - aws ecr get-login-password  | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   script:

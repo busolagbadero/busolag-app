@@ -129,14 +129,16 @@ build_image:
   - docker push $IMAGE_NAME:latest 
 
 trivy:
+  tags:
+   - runner
   stage: build
   needs: ["build_image"]
-  image: docker:24
-  services:
-    - docker:24-dind
+  # image: docker:24
+  # services:
+  #   - docker:24-dind
   before_script:
-    - apk --no-cache add curl python3 py3-pip
-    - pip3 install --no-cache-dir awscli --break-system-packages
+    # - apk --no-cache add curl python3 py3-pip
+    # - pip3 install --no-cache-dir awscli --break-system-packages
     - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.18.3
     - aws ecr get-login-password  | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   script:

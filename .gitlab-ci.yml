@@ -139,7 +139,7 @@ trivy:
   script:
     - docker pull $IMAGE_NAME:$CI_COMMIT_SHA
     - docker run --rm --name trivy bitnami/trivy:latest --version
-    - docker run --rm --name trivy bitnami/trivy:latest image -f json -o trivy.json --severity HIGH,CRITICAL --exit-code 1 $IMAGE_NAME:$CI_COMMIT_SHA
+    - docker run --rm --name trivy bitnami/trivy:latest -f json -o trivy.json --severity HIGH,CRITICAL --exit-code 1 $IMAGE_NAME:$CI_COMMIT_SHA
   allow_failure: true
   artifacts:
     when: always

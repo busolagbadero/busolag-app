@@ -152,18 +152,18 @@ trivy:
     paths:
       - trivy.json
 
-# upload_report:
-#   stage: upload
-#   image: python
-#   when: always
-#   before_script: 
-#     - pip3 install requests
-#   script:
-#     - python3 uploadpython.py gitleaks.json
-#     - python3 uploadpython.py njsscan.sarif
-#     - python3 uploadpython.py semgrep.json
-#     - python3 uploadpython.py retire.json
-#     - python3 uploadpython.py trivy.json
+upload_report:
+  stage: upload
+  image: python
+  when: always
+  before_script: 
+    - pip3 install requests
+  script:
+    - python3 uploadpython.py gitleaks.json
+    - python3 uploadpython.py njsscan.sarif
+    - python3 uploadpython.py semgrep.json
+    - python3 uploadpython.py retire.json
+    - python3 uploadpython.py trivy.json
   
 
 # deploy_test:

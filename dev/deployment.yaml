@@ -16,7 +16,11 @@ spec:
       imagePullPolicy: always
       imagePullSecret: aws-secret
       containers:
-      - name: myapp
+      - name: busolaG
         image: 905418345186.dkr.ecr.us-east-1.amazonaws.com/busolag-app:latest
         ports:
         - containerPort: 3000
+
+
+
+

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busolag-prod
+  namespace: busolag-prod
+spec:
+  selector:
+    matchLabels:
+      app: busolag-prod
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: busolag-prod
+    spec:
+      imagePullPolicy: always
+      imagePullSecret: aws-secret
+      containers:
+      - name: busolag-prod
+        image: 905418345186.dkr.ecr.us-east-1.amazonaws.com/busolag-app:latest
+        ports:
+        - containerPort: 3001

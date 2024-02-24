@@ -199,9 +199,8 @@ stages:
 deploy_prod:
   stage: deploy-prod
   when: manual
-  # needs: 
-  #   - zap
   before_script:
-     - export KUBECONFIG=$KUBECONFIG
+    - export KUBECONFIG=$KUBECONFIG
+    - apt-get update && apt-get install -y kubectl
   script:
-    - kubectl apply -f app-prod.yaml 
+    - kubectl apply -f app-prod.yaml

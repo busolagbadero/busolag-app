@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: busolaG-service
+  namespace: busolag
 spec:
   selector:
     app: busolaG

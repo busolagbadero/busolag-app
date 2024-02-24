@@ -197,13 +197,12 @@ stages:
 
 
 deploy_prod:
+  tags:
+   - kube
   stage: deploy-prod
   # when: manual
   before_script:
-    - mkdir -p bin
-    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o bin/kubectl
-    - chmod +x bin/kubectl
-    - export PATH=$PWD/bin:$PATH  # Add the bin directory to the PATH
+    - export KUBECONFIG=$KUBECONFIG
   script:
     - kubectl apply -f app-prod.yaml
 

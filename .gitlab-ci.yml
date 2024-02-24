@@ -201,7 +201,7 @@ deploy_prod:
   when: manual
   # needs: 
   #   - zap
-    before_script:
+  before_script:
      - export KUBECONFIG=$KUBECONFIG
   script:
     - kubectl apply -f app-prod.yaml 

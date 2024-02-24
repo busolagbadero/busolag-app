@@ -179,7 +179,7 @@ stages:
 
 zap:
   stage: deploy-test
-  needs: ["deploy_test"]
+  # needs: ["deploy_test"]
   image: owasp/zap2docker-stable
   variables:
     ZAP_TARGET: "http://ac01729bc0d8d4c389a8354416219ed9-753153652.us-east-1.elb.amazonaws.com:3000/"

@@ -19,4 +19,5 @@ spec:
       - name: busolag-prod
         image: 905418345186.dkr.ecr.us-east-1.amazonaws.com/busolag-app:latest
         ports:
-        - containerPort: 3001
+        - containerPort: 3002
+

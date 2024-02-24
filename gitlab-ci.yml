@@ -202,4 +202,4 @@ stages:
 #   needs: 
 #     - zap
 #   script:
-#     - echo "The deployment to production will be triggered from Argo CD, so go ahead and press play as Argo CD is set to manual mode."
+#     - kubectl aapply -f app-prod.yaml 

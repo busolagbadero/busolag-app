@@ -177,30 +177,29 @@ stages:
 #     - aws ssm wait command-executed --command-id "$COMMAND_ID" --instance-id "i-094d962c9988985dc"
 #     - aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "i-094d962c9988985dc"
 
-zap:
-  stage: deploy-test
-  # needs: ["deploy_test"]
-  image: owasp/zap2docker-stable
-  variables:
-    ZAP_TARGET: "http://ac01729bc0d8d4c389a8354416219ed9-753153652.us-east-1.elb.amazonaws.com:3000/"
+# zap:
+#   stage: deploy-test
+#   # needs: ["deploy_test"]
+#   image: owasp/zap2docker-stable
+#   variables:
+#     ZAP_TARGET: "http://ac01729bc0d8d4c389a8354416219ed9-753153652.us-east-1.elb.amazonaws.com:3000/"
     
-  before_script:
-    - mkdir -p /zap/wrk
-  script:
-    - zap-full-scan.py -t $ZAP_TARGET -g gen.conf -I -x zap.xml
-    - cp /zap/wrk/zap.xml  zap.xml
-  artifacts:
-   when: always
-   paths:
-    - zap.xml
-
+#   before_script:
+#     - mkdir -p /zap/wrk
+#   script:
+#     - zap-full-scan.py -t $ZAP_TARGET -g gen.conf -I -x zap.xml
+#     - cp /zap/wrk/zap.xml  zap.xml
+#   artifacts:
+#    when: always
+#    paths:
+#     - zap.xml
 
 
 
 # deploy_prod:
 #   stage: deploy-prod
-#   script:
-#     - echo "deploying manually"
 #   when: manual
-
-#
+#   needs: 
+#     - zap
+#   script:
+#     - echo "The deployment to production will be triggered from Argo CD, so go ahead and press play as Argo CD is set to manual mode."

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busolaG
+spec:
+  selector:
+    matchLabels:
+      app: busolaG
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: busolaG
+    spec:
+      imagePullPolicy: always
+      imagePullSecret: aws-secret
+      containers:
+      - name: myapp
+        image: 905418345186.dkr.ecr.us-east-1.amazonaws.com/busolag-app:latest
+        ports:
+        - containerPort: 3000

@@ -1,0 +1,192 @@
+variables:
+  AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID
+  AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+  IMAGE_NAME: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/busolag-app
+
+  
+
+stages:
+  - cache
+  - test
+  - build
+  - upload
+  - deploy-test
+  - deploy-prod
+
+create_cache:
+
+  stage: cache
+  image: node:18-bullseye
+  script:
+   - npm install
+  cache:
+    key:
+     files:
+       - package-lock.json
+    paths:
+     - node_modules/
+     - package-lock.json
+    policy: pull-push
+
+
+npm_test:
+ 
+ image: node:18-bullseye
+ stage: test
+ script:
+   - npm install
+   - npm install express
+   - npm install jest --save-dev
+   - npm install supertest --save-dev
+   - npx jest
+ allow_failure: true
+ cache:
+    key:
+     files:
+       - package-lock.json
+    paths:
+     - node_modules/
+     - package-lock.json
+    policy: pull
+
+git_leaks:
+  
+  stage: test
+  image: 
+   name: zricethezav/gitleaks
+   entrypoint: [""]
+  script:
+    gitleaks detect --verbose --source . -f json -r gitleaks.json
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - gitleaks.json
+
+njsscan:
+  
+  stage: test
+  image: python
+  before_script:
+    - pip3 install --upgrade njsscan
+  script:
+    - njsscan --exit-warning . --sarif -o njsscan.sarif
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - njsscan.sarif
+
+semgrep:
+  
+  stage: test
+  image: returntocorp/semgrep
+  variables: 
+    SEMGREP_RULES: p/javascript
+  script: semgrep ci --json --output semgrep.json
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - semgrep.json
+
+retire:
+ 
+ stage: test
+ image: node:18-bullseye
+ cache:
+    key:
+     files:
+       - package-lock.json
+    paths:
+     - node_modules/
+     - package-lock.json
+    policy: pull
+ before_script: 
+  - npm install -g retire
+ script:
+  - retire --path . --outputformat json --outputpath retire.json
+ allow_failure: true
+ artifacts:
+    when: always
+    paths:
+      - retire.json
+
+  
+build_image:
+ tags:
+   - runner
+ stage: build 
+ before_script:
+   - aws ecr get-login-password  | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+ script:
+  - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest .
+  - docker push $IMAGE_NAME:$CI_COMMIT_SHA
+  - docker push $IMAGE_NAME:latest 
+
+
+
+
+trivy:
+  stage: build
+  needs: ["build_image"]
+  image: docker:24
+  services:
+    - docker:24-dind
+  before_script:
+    - apk --no-cache add curl python3 py3-pip
+    - pip3 install --no-cache-dir awscli --break-system-packages
+    - chmod +w /usr/local/bin/
+    - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.18.3
+    - aws ecr get-login-password  | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+  script:
+    - docker pull $IMAGE_NAME:$CI_COMMIT_SHA
+    - trivy image -f json -o trivy.json --severity HIGH,CRITICAL --exit-code 1 $IMAGE_NAME:$CI_COMMIT_SHA
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - trivy.json
+
+upload_report:
+  stage: upload
+  image: python
+  when: always
+  before_script: 
+    - pip3 install requests
+  script:
+    - python3 uploadpython.py gitleaks.json
+    - python3 uploadpython.py njsscan.sarif
+    - python3 uploadpython.py semgrep.json
+    - python3 uploadpython.py retire.json
+    - python3 uploadpython.py trivy.json
+  
+
+zap:
+  stage: deploy-test
+  image: owasp/zap2docker-stable
+  variables:
+    ZAP_TARGET: "http://ac01729bc0d8d4c389a8354416219ed9-753153652.us-east-1.elb.amazonaws.com:3000/"
+    
+  before_script:
+    - mkdir -p /zap/wrk
+  script:
+    - zap-full-scan.py -t $ZAP_TARGET -g gen.conf -I -x zap.xml
+    - cp /zap/wrk/zap.xml  zap.xml
+  artifacts:
+   when: always
+   paths:
+    - zap.xml
+
+
+
+deploy_prod:
+  tags:
+   - kube
+  stage: deploy-prod
+  when: manual
+  before_script:
+    - export KUBECONFIG=$KUBECONFIG
+  script:
+    - kubectl apply -f app-prod.yaml
+
